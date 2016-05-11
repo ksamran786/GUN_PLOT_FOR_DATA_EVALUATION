@@ -1,0 +1,112 @@
+#!/bin/bash
+
+rm mptcp_cwnd
+rm mptcp_in_flights
+rm mptcp_srtt
+rm cwnd_new_11
+rm cwnd_new_22
+
+SF1=f56f61c0
+SF2=f5335080
+#c1=7
+#c2=10
+time=15:24
+syslog=/home/samran/scheduler_results/extended_scenario/rtt/mptcp-client/exp-5_cap-100,100_delay-10,20_mp
+
+
+#Congestion  window calculation from syslog
+
+grep -rZ -E "$time.*TCP_OUT" $syslog > mptcp_cwnd
+
+# for subflow 1
+
+grep -rZ -E "$SF1" mptcp_cwnd > cwnd_sf1_with_id
+
+awk '{print $7, $10}' cwnd_sf1_with_id > cwnd_sf1_new
+
+rm cwnd_sf1_with_id
+
+sed 's/]//' cwnd_sf1_new > cwnd_new_1
+sed 's/.//' cwnd_new_1 > cwnd_new_11
+#head -n -5 fw_delay_new_1 > fw_delay_new_11
+rm cwnd_new_1
+rm cwnd_sf1_new
+
+# for subflow 2
+
+grep -rZ -E "$SF2" mptcp_cwnd > cwnd_sf2_with_id
+
+awk '{print $7, $10}' cwnd_sf2_with_id > cwnd_sf2_new
+
+rm cwnd_sf2_with_id
+
+sed 's/]//' cwnd_sf2_new > cwnd_new_2
+sed 's/.//' cwnd_new_2 > cwnd_new_22
+#head -n -5 fw_delay_new_2 > fw_delay_new_22
+rm cwnd_new_2
+rm cwnd_sf2_new
+
+#in_flights graph calculation from syslog
+
+grep -rZ -E "$time.*MP__TCP" $syslog  > mptcp_in_flights1
+grep -rZ -E "in_flights" mptcp_in_flights1 > mptcp_in_flights
+rm mptcp_in_flights1
+# for subflow 1
+
+grep -rZ -E "$SF1" mptcp_in_flights > in_flights_sf1_with_id
+
+awk '{print $7, $10}' in_flights_sf1_with_id > in_flights_sf1_new
+
+rm in_flights_sf1_with_id
+
+sed 's/]//' in_flights_sf1_new > in_flights_new_1
+sed 's/.//' in_flights_new_1 > in_flights_new_11
+#head -n -5 fw_delay_new_1 > fw_delay_new_11
+
+rm in_flights_sf1_new
+rm in_flights_new_1
+# for subflow 2
+
+grep -rZ -E "$SF2" mptcp_in_flights > in_flights_sf2_with_id
+awk '{print $7, $10}' in_flights_sf2_with_id > in_flights_sf2_new
+
+rm in_flights_sf2_with_id
+
+sed 's/]//' in_flights_sf2_new > in_flights_new_2
+sed 's/.//' in_flights_new_2 > in_flights_new_22
+#head -n -5 fw_delay_new_2 > fw_delay_new_22
+rm in_flights_new_2
+rm in_flights_sf2_new
+
+#ROUND TRIP TIME  graph calculation from syslog
+
+grep -rZ -E "$time.*MP__TCP" $syslog > mptcp_srtt1
+grep -rZ -E "srtt" mptcp_srtt1 > mptcp_srtt
+rm mptcp_srtt1
+# for subflow 1
+
+grep -rZ -E "$SF1" mptcp_srtt > srtt_sf1_with_id
+
+awk '{print $7, $10}' srtt_sf1_with_id > srtt_sf1_new
+
+rm srtt_sf1_with_id
+
+sed 's/]//' srtt_sf1_new > srtt_new_1
+sed 's/.//' srtt_new_1 > srtt_new_11
+#head -n -5 fw_delay_new_1 > fw_delay_new_11
+
+rm srtt_sf1_new
+rm srtt_new_1
+# for subflow 2
+
+grep -rZ -E "$SF2" mptcp_srtt > srtt_sf2_with_id
+
+awk '{print $7, $10}' srtt_sf2_with_id > srtt_sf2_new
+
+rm srtt_sf2_with_id
+
+sed 's/]//' srtt_sf2_new > srtt_new_2
+sed 's/.//' srtt_new_2 > srtt_new_22
+#head -n -5 fw_delay_new_2 > fw_delay_new_22
+rm srtt_new_2  
+rm srtt_sf2_new

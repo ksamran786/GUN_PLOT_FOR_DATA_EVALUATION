@@ -1,0 +1,40 @@
+#!/bin/bash
+set terminal tex
+
+#set terminal png font ",8"
+#set output "Extended_symetric_scenario_10_10.png"
+
+set output "Extended_symetric_scenario_10_10.tex"
+set key reverse right top font ",4" 
+set key spacing 0.8
+#set key width-4.5
+#set key height 0.5
+
+set multiplot layout 2,2 title "Delay Symetric Scenario" font "Arial-Bold,14"
+set xlabel "Time (sec) " font ",8" 
+offset_T=750-374
+mul=2
+
+#set xrange [0:25]
+set grid
+set ylabel "Congestion Window Size " font ",8"
+#set yrange [0:1500]
+#set title  "Congestion Window (cwnd)" font "Arial-Bold,6" offset 5,-10.7
+plot "cwnd_new_11" using (($1-offset_T)*mul):($2) title "Subflow 1" with lines lt rgb "red", "cwnd_new_22" using (($1-offset_T)*mul):($2) title "Subflow 2" with lines lt rgb "blue"
+unset ylabel
+unset title
+#unset key
+#set key reverse bottom out font ",6"
+#set key spacing 0.8
+set ylabel "No. of Packets in Flight" font ",8"
+#set title "Number of Packets in_Flight " font "Arial-Bold,6" offset 5,-10.7 
+plot "in_flights_new_11" using (($1-offset_T)*mul):($2) title "Subflow 1"  with lines lt rgb "red", "in_flights_new_22" using (($1-offset_T)*mul):($2) title "Subflow 2" with lines lt rgb "blue"
+unset ylabel
+unset title
+unset key
+
+set key reverse right top font ",4"
+set key spacing 0.8
+set ylabel "Smoothed Round Trip Time" font ",8" 
+plot "srtt_new_11" using (($1-offset_T)*mul):($2) title "Subflow 1"  with lines lt rgb "red", "srtt_new_22" using (($1-offset_T)*mul):($2) title "Subflow 2" with lines lt rgb "purple"
+unset multiplot
